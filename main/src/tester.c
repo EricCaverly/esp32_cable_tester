@@ -10,6 +10,17 @@ void init_gpio() {
     gpio_set_level(SEL_A0, 0);
     gpio_set_level(SEL_A1, 0);
     gpio_set_level(SEL_A2, 0);
+
+    // Set RJ45 pins as input
+    gpio_set_direction(RJ45_P0, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P1, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P2, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P3, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P4, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P5, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P6, GPIO_MODE_INPUT);
+    gpio_set_direction(RJ45_P7, GPIO_MODE_INPUT);
+    
 }
 
 void disable_line(uint8_t line) {
