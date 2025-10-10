@@ -1,17 +1,38 @@
 #include "esp_adc/adc_oneshot.h"
-#include "freertos/idf_additions.h"
 #include "hal/adc_types.h"
-#include "portmacro.h"
 #include "sdkconfig.h"
 #include "soc/adc_channel.h"
 #include "tester.h"
 #include "ssd1306.h"
 #include <stdbool.h>
 
+const uint8_t g_lines[] = {
+    RJ45_P0,
+    RJ45_P1,
+    RJ45_P2,
+    RJ45_P3,
+    RJ45_P4,
+    RJ45_P5,
+    RJ45_P6,
+    RJ45_P7
+};
+
+const uint8_t g_correct_lines[] = {
+    RJ45_P1,
+    RJ45_P0,
+    RJ45_P3,
+    RJ45_P2,
+    RJ45_P5,
+    RJ45_P4,
+    RJ45_P7,
+    RJ45_P6
+};
+
+pin_check_result_t line_result[8];
+
+
 void app_main(void) {
-    int i = 0;
     SSD1306_t dev;
-    int adc_v = 0;
 
     // Initialize the display
     i2c_master_init(&dev, SDA, SCL, CONFIG_RESET_GPIO);
@@ -38,14 +59,15 @@ void app_main(void) {
     //! Test the display, remove later
     ssd1306_display_text(&dev, 0, "Hello", 5, false);
 
-    while (1) {
-        
-        adc_oneshot_read(adc2_handle, ADC2_GPIO15_CHANNEL, &adc_v);
-        printf("\nRaw Value: %f\n", (adc_v/4095.0)*3.3);
+    // while (1) {
+    //     adc_oneshot_read(adc2_handle, ADC2_GPIO15_CHANNEL, &adc_v);
+    //     printf("\nRaw Value: %f\n", (adc_v/4095.0)*3.3);
 
-        printf("Disabling wire %d\n", i);
-        disable_line(i);
-        vTaskDelay(1 * 1000 / portTICK_PERIOD_MS);
-        if (++i >= 8) i = 0;
-    }
+    //     printf("Disabling wire %d\n", i);
+    //     disable_line(i);
+    //     vTaskDelay(1 * 1000 / portTICK_PERIOD_MS);
+    //     if (++i >= 8) i = 0;
+    // }
+
+
 }

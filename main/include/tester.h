@@ -1,4 +1,5 @@
 #include "driver/gpio.h"
+#include <stdint.h>
 
 #define SEL_A0 GPIO_NUM_19
 #define SEL_A1 GPIO_NUM_18
@@ -18,5 +19,21 @@
 #define DISP_WIDTH 128
 #define DISP_HEIGHT 64
 
+#define TEST_BTN_PIN 34
+
+typedef struct {
+    uint8_t conn_to[8];
+    uint8_t invalid;
+    uint8_t conn_to_len;
+} pin_check_result_t;
+
+
+extern const uint8_t g_lines[];
+extern const uint8_t g_correct_lines[];
+extern pin_check_result_t line_result[8];
+
 void init_gpio();
 void disable_line(uint8_t line);
+
+void test_all_pins();
+void test_pin(uint8_t line);
