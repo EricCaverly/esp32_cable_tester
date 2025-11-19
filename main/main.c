@@ -1,35 +1,9 @@
-#include "esp_adc/adc_oneshot.h"
 #include "hal/adc_types.h"
 #include "sdkconfig.h"
 #include "soc/adc_channel.h"
 #include "tester.h"
 #include "ssd1306.h"
 #include <stdbool.h>
-
-const uint8_t g_lines[] = {
-    RJ45_P0,
-    RJ45_P1,
-    RJ45_P2,
-    RJ45_P3,
-    RJ45_P4,
-    RJ45_P5,
-    RJ45_P6,
-    RJ45_P7
-};
-
-const uint8_t g_correct_lines[] = {
-    RJ45_P1,
-    RJ45_P0,
-    RJ45_P3,
-    RJ45_P2,
-    RJ45_P5,
-    RJ45_P4,
-    RJ45_P7,
-    RJ45_P6
-};
-
-pin_check_result_t line_result[8];
-
 
 void app_main(void) {
     SSD1306_t dev;
@@ -41,7 +15,6 @@ void app_main(void) {
     ssd1306_clear_screen(&dev, false);
 
     // Initialize the ADC
-    adc_oneshot_unit_handle_t adc2_handle;
     adc_oneshot_unit_init_cfg_t init_cfg = {
         .unit_id = ADC_UNIT_2,
         .ulp_mode = ADC_ULP_MODE_DISABLE,

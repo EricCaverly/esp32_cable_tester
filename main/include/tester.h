@@ -1,9 +1,9 @@
-#include "driver/gpio.h"
+#include "esp_adc/adc_oneshot.h"
 #include <stdint.h>
 
-#define SEL_A0 GPIO_NUM_19
+#define SEL_A0 GPIO_NUM_16
 #define SEL_A1 GPIO_NUM_18
-#define SEL_A2 GPIO_NUM_17
+#define SEL_A2 GPIO_NUM_19
 
 #define RJ45_P0 GPIO_NUM_13
 #define RJ45_P1 GPIO_NUM_12
@@ -14,26 +14,28 @@
 #define RJ45_P6 GPIO_NUM_33
 #define RJ45_P7 GPIO_NUM_32
 
-#define SCL 22
-#define SDA 21
+#define SCL GPIO_NUM_22
+#define SDA GPIO_NUM_21
 #define DISP_WIDTH 128
 #define DISP_HEIGHT 64
 
-#define TEST_BTN_PIN 34
+#define TEST_BTN_PIN GPIO_NUM_34
 
 typedef struct {
-    uint8_t conn_to[8];
-    uint8_t invalid;
-    uint8_t conn_to_len;
-} pin_check_result_t;
+    uint8_t tx;
+    uint8_t rx;
+    uint8_t dir;
+} test_result_t;
 
 
 extern const uint8_t g_lines[];
-extern const uint8_t g_correct_lines[];
-extern pin_check_result_t line_result[8];
+
+extern adc_oneshot_unit_handle_t adc2_handle;
 
 void init_gpio();
-void disable_line(uint8_t line);
 
-void test_all_pins();
-void test_pin(uint8_t line);
+void select_line(uint8_t line);
+void test_all_pins(test_result_t results[8]);
+
+test_result_t test_pin(uint8_t line);
+uint8_t check_correct(test_result_t r);
