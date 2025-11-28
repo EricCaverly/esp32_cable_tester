@@ -1,9 +1,14 @@
 #include "tester.h"
 #include "driver/gpio.h"
+#include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include "hal/gpio_types.h"
 #include "portmacro.h"
 #include "soc/adc_channel.h"
+#include <string.h>
+#include "iot_button.h"
+#include "button_gpio.h"
+#include "button_types.h"
 
 // -------------- Initialization ------------------------ //
 const uint8_t g_lines[] = {
@@ -51,7 +56,34 @@ void init_gpio() {
 
     // Set Test button as input
     gpio_set_direction(TEST_BTN_PIN, GPIO_MODE_INPUT);
-    
+}
+
+void init_adc(void) {
+    adc_oneshot_unit_init_cfg_t init_cfg = {
+        .unit_id = ADC_UNIT_2,
+        .ulp_mode = ADC_ULP_MODE_DISABLE,
+    };
+    adc_oneshot_new_unit(&init_cfg, &adc2_handle);
+    adc_oneshot_chan_cfg_t config = {
+        .bitwidth = ADC_BITWIDTH_DEFAULT,
+        .atten = ADC_ATTEN_DB_12,
+    };
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc2_handle, ADC2_GPIO15_CHANNEL, &config));
+}
+
+void init_button(void) {
+    const button_config_t btn_cfg = {0};
+    const button_gpio_config_t btn_gpio_cfg = {
+        .gpio_num =TEST_BTN_PIN,
+        .active_level = 1,
+    };
+    button_handle_t tst_btn = NULL;
+    ESP_ERROR_CHECK(iot_button_new_gpio_device(&btn_cfg, &btn_gpio_cfg, &tst_btn));
+    if (NULL == tst_btn) {
+        ESP_LOGE(TAG, "Button creation failed");
+        return;
+    }
+    ESP_ERROR_CHECK(iot_button_register_cb(tst_btn, BUTTON_SINGLE_CLICK, NULL, tst_button_pressed, NULL));
 }
 
 // ----------------- Helper Functions -------------------- //
@@ -155,3 +187,14 @@ void test_all_pins(test_result_t results[8]) {
 }
 
 
+void tst_button_pressed(void *arg, void *usr_data) {
+    if (testing)
+        return;
+    testing = true;
+
+    ESP_LOGI(TAG, "Button pressed, test starting");
+
+    test_result_t results[8];
+
+    test_all_pins(results);
+}

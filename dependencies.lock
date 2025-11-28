@@ -1,10 +1,34 @@
 dependencies:
+  espressif/button:
+    component_hash: 4ed25fcf354b48aa5e5680b9e7549e38d7738f9b613c94a2e39119c100db9c95
+    dependencies:
+    - name: espressif/cmake_utilities
+      registry_url: https://components.espressif.com
+      require: private
+      version: '*'
+    - name: idf
+      require: private
+      version: '>=4.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 4.1.4
+  espressif/cmake_utilities:
+    component_hash: 05165f30922b422b4b90c08845e6d449329b97370fbd06309803d8cb539d79e3
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.1'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.1.1
   idf:
     source:
       type: idf
     version: 5.5.1
   nopnop2002/ssd1306:
-    component_hash: 6b7041f67f741708947c72b707087520100486286df9bc1536b42c46040c577b
+    component_hash: c118e111d989d2b427ff714bab329405d76deff181bd1bb7356b3b19e74c141b
     dependencies: []
     source:
       git: https://github.com/nopnop2002/esp-idf-ssd1306.git
@@ -12,7 +36,8 @@ dependencies:
       type: git
     version: 58881eb222d977d99f120d574b705386078a872e
 direct_dependencies:
+- espressif/button
 - nopnop2002/ssd1306
-manifest_hash: d2100b8f02a5b16b6a71ff75070def5df07aee33764dc4fd80fc46ed1e207354
+manifest_hash: b46b6f8f8de0dc5b1d08d177318256d53788545d1262c5b2752002c54534d8b7
 target: esp32
 version: 2.0.0

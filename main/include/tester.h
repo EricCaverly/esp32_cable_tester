@@ -1,4 +1,5 @@
 #include "esp_adc/adc_oneshot.h"
+#include "ssd1306.h"
 #include <stdint.h>
 
 #define SEL_A0 GPIO_NUM_16
@@ -21,21 +22,31 @@
 
 #define TEST_BTN_PIN GPIO_NUM_34
 
+#define TAG "tester"
+
 typedef struct {
     uint8_t tx;
     uint8_t rx;
     uint8_t dir;
 } test_result_t;
 
-
+extern volatile bool testing;
 extern const uint8_t g_lines[];
 
 extern adc_oneshot_unit_handle_t adc2_handle;
+extern SSD1306_t screen_handle;
 
 void init_gpio();
+void init_display(void);
+void init_adc(void);
+void init_button(void);
+
+void reset_display();
 
 void select_line(uint8_t line);
 void test_all_pins(test_result_t results[8]);
+void tst_button_pressed(void*, void*);
 
 test_result_t test_pin(uint8_t line);
 uint8_t check_correct(test_result_t r);
+
