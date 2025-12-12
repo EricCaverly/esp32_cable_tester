@@ -42,6 +42,8 @@ void init_adc(void);
 void init_button(void);
 
 void reset_display();
+void display_text(char* text, int line);
+void display_results(test_result_t results[8]);
 
 void select_line(uint8_t line);
 void test_all_pins(test_result_t results[8]);

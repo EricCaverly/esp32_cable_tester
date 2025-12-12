@@ -1,10 +1,12 @@
 #include "tester.h"
 #include "driver/gpio.h"
-#include "esp_log.h"
+// #include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include "hal/gpio_types.h"
 #include "portmacro.h"
 #include "soc/adc_channel.h"
+#include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "iot_button.h"
 #include "button_gpio.h"
@@ -68,7 +70,7 @@ void init_adc(void) {
         .bitwidth = ADC_BITWIDTH_DEFAULT,
         .atten = ADC_ATTEN_DB_12,
     };
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc2_handle, ADC2_GPIO15_CHANNEL, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc2_handle, ADC2_GPIO4_CHANNEL, &config));
 }
 
 void init_button(void) {
@@ -80,7 +82,7 @@ void init_button(void) {
     button_handle_t tst_btn = NULL;
     ESP_ERROR_CHECK(iot_button_new_gpio_device(&btn_cfg, &btn_gpio_cfg, &tst_btn));
     if (NULL == tst_btn) {
-        ESP_LOGE(TAG, "Button creation failed");
+        // ESP_LOGE(TAG, "Button creation failed");
         return;
     }
     ESP_ERROR_CHECK(iot_button_register_cb(tst_btn, BUTTON_SINGLE_CLICK, NULL, tst_button_pressed, NULL));
@@ -107,13 +109,15 @@ test_result_t test_pin(uint8_t line) {
     select_line(line+1);
 
     // Wait for potential interference, capacitance, inductance ex to disipate
-    vTaskDelay(portTICK_PERIOD_MS * 60);
+    vTaskDelay(portTICK_PERIOD_MS * 10);
 
     // Read all GPIO pins
     uint8_t rx_values = read_pins();
 
     // Read ADC
     adc_oneshot_read(adc2_handle, ADC2_GPIO15_CHANNEL, &adc_v);
+
+    printf("Level: %d\n", adc_v);
 
     // Determine direction based on ADC value
     uint8_t dir;
@@ -143,7 +147,7 @@ void select_line(uint8_t line) {
     // These pins do two things
     //  1) Use an optocoupler to disable the line that is currently being pulled high
     //  2) Pull the selected line high
-    printf("A0:%d A1:%d A2:%d", line & 0b001, line & 0b010, line & 0b100);
+    // printf("A0:%d A1:%d A2:%d", line & 0b001, line & 0b010, line & 0b100);
     gpio_set_level(SEL_A0, line & 0b001);
     gpio_set_level(SEL_A1, line & 0b010);
     gpio_set_level(SEL_A2, line & 0b100);
@@ -192,9 +196,14 @@ void tst_button_pressed(void *arg, void *usr_data) {
         return;
     testing = true;
 
-    ESP_LOGI(TAG, "Button pressed, test starting");
+    reset_display();
+    display_text("Testing...", 0);
 
     test_result_t results[8];
 
     test_all_pins(results);
+    select_line(0);
+
+    display_results(results);
+    testing = false;
 }

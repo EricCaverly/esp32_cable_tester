@@ -9,6 +9,7 @@ void app_main(void) {
     init_gpio();
     init_button();
     reset_display();
+    display_text("Press Test", 0);
 }
 
 
